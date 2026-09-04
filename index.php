@@ -1,6 +1,6 @@
 <?php
 // Replace with your actual Telegram Bot Token from BotFather
-define('BOT_TOKEN', '8964814604:AAFpE9qnn4XBCfaEWBnfGEVp_Mpa72LmRzg');
+define('BOT_TOKEN', 'token');
 
 // Get the incoming update from Telegram
 $content = file_get_contents("php://input");
