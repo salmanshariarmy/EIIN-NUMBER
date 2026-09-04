@@ -13,23 +13,19 @@ if (!$update || !isset($update['message'])) {
 $chatId = $update['message']['chat']['id'];
 $text = trim($update['message']['text'] ?? '');
 
-// Check if the user sent a command or an EIIN number
+// Handle /start command
 if ($text === '/start') {
-    sendMessage($chatId, "Welcome! Send me a valid EIIN number, and I will fetch the details for you.");
+    sendMessage($chatId, "Welcome! Send me a valid EIIN number, and I will fetch the teacher details for you.");
     exit;
 }
 
 // Validate if the input is a valid numeric EIIN
-if (!preg_match('/^\d+$/,', $text)) {
-    // Wait, let's fix the regex match cleanly
-}
-
 if (!preg_match('/^\d+$/', $text)) {
     sendMessage($chatId, "Please send a valid numeric EIIN number (digits only).");
     exit;
 }
 
-// Run the API logic using the user's input as the EIIN
+// Run the API logic
 $eiin = $text;
 $url = 'https://emis.gov.bd/emis/Portal/GetTeacherDetails';
 $csrf = 'FYdlvws4yxuNHAUXRaOXLRG1WGYsclc-uNAWxja4RHm7YCERV2tTPjgluf620W_IkrhILwj5Gew6EjPvoM3j7qdJRNZoJw1Tjwc8ovOZo841';
@@ -67,9 +63,8 @@ if ($error) {
     exit;
 }
 
-// Format the response to send back to Telegram
-// Telegram has a 4096 character limit per message, so we format it cleanly
-$formattedResponse = json_encode(json_decode($response), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+$decoded = json_decode($response, true);
+$formattedResponse = json_encode($decoded, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
 if (strlen($formattedResponse) > 4000) {
     $formattedResponse = substr($formattedResponse, 0, 4000) . "\n... (truncated)";
